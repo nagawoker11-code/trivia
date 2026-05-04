@@ -7,18 +7,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* ביטול גלילה ברמת ה-body וה-html */
+        /* מניעת גלילה מוחלטת וקיבוע המסך */
         html, body {
             background-color: #000;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* מונע גלילה */
-            position: fixed; /* מקבע את הדף למניעת קפיצות */
+            overflow: hidden; 
+            position: fixed; 
             width: 100%;
             height: 100%;
             font-family: 'Assistant', sans-serif;
             color: white;
-            touch-action: none; /* מבטל מחוות דפדפן כמו זום או גלילה */
+            /* מונע מחוות דפדפן כמו גלילה, זום ורענון במשיכה */
+            touch-action: none; 
+            -webkit-overflow-scrolling: none;
         }
 
         /* Video Background */
@@ -110,6 +112,8 @@
             background-color: #111;
             overflow: hidden;
             user-select: none;
+            /* מונע גרירה של האלמנט עצמו */
+            -webkit-user-drag: none;
         }
 
         .card-prize-img {
@@ -121,6 +125,7 @@
             z-index: 1;
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none; /* מונע אינטראקציה עם התמונה */
         }
 
         .scratch-canvas {
@@ -129,7 +134,7 @@
             left: 0;
             z-index: 2;
             cursor: pointer;
-            touch-action: none;
+            touch-action: none; /* קריטי למובייל */
         }
 
         /* Win Response */
@@ -220,10 +225,13 @@
         let cardsFinished = new Set();
         const totalCards = 4;
 
-        // מניעת גלילה נוספת דרך JS (למקרים קיצוניים)
+        // מניעת כל גלילה ואיפוס דף במובייל
         document.addEventListener('touchmove', function(e) {
             e.preventDefault();
         }, { passive: false });
+
+        // מניעת "משיכה לרענון" במובייל (Chrome/Safari)
+        document.body.style.overscrollBehavior = 'none';
 
         function playSound(type) {
             try {
@@ -300,7 +308,8 @@
 
                 function scratch(e) {
                     if (!isDrawing) return;
-                    e.preventDefault(); // מניעת גלילה בזמן הגירוד
+                    // מונע מהדפדפן לפרש את הגירוד כגלילה
+                    if (e.cancelable) e.preventDefault(); 
                     
                     const pos = getPos(e);
 
@@ -313,12 +322,18 @@
                     checkScratchedPercent(canvas, index);
                 }
 
+                // רישום אירועים עם passive: false כדי לאפשר preventDefault
                 canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
-                canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });
+                canvas.addEventListener('touchstart', (e) => { 
+                    isDrawing = true; 
+                    scratch(e); 
+                }, { passive: false });
+
                 window.addEventListener('mouseup', () => isDrawing = false);
                 window.addEventListener('touchend', () => isDrawing = false);
+                
                 canvas.addEventListener('mousemove', scratch);
-                canvas.addEventListener('touchmove', scratch);
+                canvas.addEventListener('touchmove', scratch, { passive: false });
             });
         }
 
@@ -330,7 +345,7 @@
             const pixels = imageData.data;
             let transparentPixels = 0;
 
-            for (let i = 0; i < pixels.length; i += 32) { // Sampling for performance
+            for (let i = 0; i < pixels.length; i += 32) { 
                 if (pixels[i + 3] < 128) {
                     transparentPixels++;
                 }
@@ -365,7 +380,13 @@
             setTimeout(initScratchCards, 150);
         };
         
-        window.onresize = () => location.reload();
+        // מניעת איפוס בשינוי גודל חלון במובייל (לפעמים קורה כשסרגל הכתובת מוסתר)
+        let windowWidth = window.innerWidth;
+        window.onresize = () => {
+            if (window.innerWidth !== windowWidth) {
+                location.reload();
+            }
+        };
     </script>
 </body>
 </html>
