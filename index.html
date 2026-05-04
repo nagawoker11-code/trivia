@@ -101,12 +101,12 @@
             border-radius: 12px;
             border: 3px solid #ffd700;
             box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-            background-color: #fff;
+            background-color: #111; /* Dark background until revealed */
             overflow: hidden;
             user-select: none;
         }
 
-        /* The hidden content underneath (User Images) */
+        /* The hidden content underneath (User Images) - Hidden by default */
         .card-prize-img {
             position: absolute;
             inset: 0;
@@ -114,6 +114,8 @@
             height: 100%;
             object-fit: cover;
             z-index: 1;
+            opacity: 0; /* Important: hidden until setup is done */
+            transition: opacity 0.3s ease;
         }
 
         /* The scratchable canvas on top */
@@ -184,19 +186,19 @@
         
         <div class="cards-grid">
             <div class="scratch-container" data-id="1">
-                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/504714713_10221756970193160_1530533672446616150_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=f798df&_nc_ohc=rL9C5ZdHPZkQ7kNvwFbwmVP&_nc_oc=AdpjfbE3t2-TGeAWbdfwJonyVZEdma4d1XteqFJ8_mdDURnVK8C8YuDLoqycO-NRov8&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=nyGHEBCjaA2rjg4KqxSI4w&_nc_ss=7b2a8&oh=00_Af5cfE1MGGcApsKyK1VMLxE6N-I_Iy4ppLVa-KM0v0jImQ&oe=69FE5AE4" class="card-prize-img" alt="Prize 1">
+                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/504714713_10221756970193160_1530533672446616150_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=f798df&_nc_ohc=rL9C5ZdHPZkQ7kNvwFbwmVP&_nc_oc=AdpjfbE3t2-TGeAWbdfwJonyVZEdma4d1XteqFJ8_mdDURnVK8C8YuDLoqycO-NRov8&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=nyGHEBCjaA2rjg4KqxSI4w&_nc_ss=7b2a8&oh=00_Af5cfE1MGGcApsKyK1VMLxE6N-I_Iy4ppLVa-KM0v0jImQ&oe=69FE5AE4" class="card-prize-img" onload="this.classList.add('ready')">
                 <canvas class="scratch-canvas"></canvas>
             </div>
             <div class="scratch-container" data-id="2">
-                <img src="https://scontent.ftlv27-1.fna.fbcdn.net/v/t39.30808-6/508332806_10228283771590100_123235062329237238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=f798df&_nc_ohc=h56w18aFmVAQ7kNvwFiyZ53&_nc_oc=AdommK_FXuIx-qciV86qjccJA_ufu6XR8YnustpicH1ydFJAUTa5HGqBlnQz0fKVlv0&_nc_zt=23&_nc_ht=scontent.ftlv27-1.fna&_nc_gid=cFo74KLZX6vyHWtTdR_2UQ&_nc_ss=7b2a8&oh=00_Af4YjiFtLeyibP7seUJGzkj4aKD6XDM-Xybu4Hdg-8SOCA&oe=69FE3847" class="card-prize-img" alt="Prize 2">
+                <img src="https://scontent.ftlv27-1.fna.fbcdn.net/v/t39.30808-6/508332806_10228283771590100_123235062329237238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=f798df&_nc_ohc=h56w18aFmVAQ7kNvwFiyZ53&_nc_oc=AdommK_FXuIx-qciV86qjccJA_ufu6XR8YnustpicH1ydFJAUTa5HGqBlnQz0fKVlv0&_nc_zt=23&_nc_ht=scontent.ftlv27-1.fna&_nc_gid=cFo74KLZX6vyHWtTdR_2UQ&_nc_ss=7b2a8&oh=00_Af4YjiFtLeyibP7seUJGzkj4aKD6XDM-Xybu4Hdg-8SOCA&oe=69FE3847" class="card-prize-img" onload="this.classList.add('ready')">
                 <canvas class="scratch-canvas"></canvas>
             </div>
             <div class="scratch-container" data-id="3">
-                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/517277995_10163352825219916_3326349968517575788_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=f798df&_nc_ohc=aF-HMDZ9bIgQ7kNvwGnoyom&_nc_oc=AdqAlEQbE8HrfZZ2ZptW8qoTC0T_TW84CzA7h-JGnWApm3lKCzxMaiOU2OwykXWMKJ8&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=xrjardMx4qiHRP1sWargfg&_nc_ss=7b2a8&oh=00_Af67cYVz9O_IhP85OFn8lAyF7fPiq9blbAAYswgC9EDIPg&oe=69FE376D" class="card-prize-img" alt="Prize 3">
+                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/517277995_10163352825219916_3326349968517575788_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=f798df&_nc_ohc=aF-HMDZ9bIgQ7kNvwGnoyom&_nc_oc=AdqAlEQbE8HrfZZ2ZptW8qoTC0T_TW84CzA7h-JGnWApm3lKCzxMaiOU2OwykXWMKJ8&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=xrjardMx4qiHRP1sWargfg&_nc_ss=7b2a8&oh=00_Af67cYVz9O_IhP85OFn8lAyF7fPiq9blbAAYswgC9EDIPg&oe=69FE376D" class="card-prize-img" onload="this.classList.add('ready')">
                 <canvas class="scratch-canvas"></canvas>
             </div>
             <div class="scratch-container" data-id="4">
-                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/599425034_32670351209276403_372571765436249666_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=f798df&_nc_ohc=qSZHbGg6R-IQ7kNvwGN8iH3&_nc_oc=AdpYXVjbxzVd5ixj1WRmhZY5ZsCzmlNgdN6b2P3yL8Z_rO19irpvGINIZLci-ULr1ao&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=KdL2s0fbjI_4VU2B9BHSSQ&_nc_ss=7b2a8&oh=00_Af4-cyQkFDQXWz2YcXBp1CXVZqk7D0hb-tkaGliTfAyGhQ&oe=69FE53DE" class="card-prize-img" alt="Prize 4">
+                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/599425034_32670351209276403_372571765436249666_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=f798df&_nc_ohc=qSZHbGg6R-IQ7kNvwGN8iH3&_nc_oc=AdpYXVjbxzVd5ixj1WRmhZY5ZsCzmlNgdN6b2P3yL8Z_rO19irpvGINIZLci-ULr1ao&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=KdL2s0fbjI_4VU2B9BHSSQ&_nc_ss=7b2a8&oh=00_Af4-cyQkFDQXWz2YcXBp1CXVZqk7D0hb-tkaGliTfAyGhQ&oe=69FE53DE" class="card-prize-img" onload="this.classList.add('ready')">
                 <canvas class="scratch-canvas"></canvas>
             </div>
         </div>
@@ -247,14 +249,14 @@
             
             containers.forEach((container, index) => {
                 const canvas = container.querySelector('.scratch-canvas');
+                const img = container.querySelector('.card-prize-img');
                 const ctx = canvas.getContext('2d', { willReadFrequently: true });
                 
-                // Get display dimensions
                 const rect = container.getBoundingClientRect();
                 canvas.width = rect.width;
                 canvas.height = rect.height;
 
-                // Create Scratch Layer (Silver Gradient like Real Scratch Cards)
+                // Create Scratch Layer
                 const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
                 grad.addColorStop(0, '#c0c0c0');
                 grad.addColorStop(0.5, '#e8e8e8');
@@ -263,7 +265,7 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Add texture to the scratch layer
+                // Texture
                 ctx.globalAlpha = 0.1;
                 for(let i=0; i<100; i++) {
                     ctx.fillStyle = Math.random() > 0.5 ? '#fff' : '#000';
@@ -271,11 +273,14 @@
                 }
                 ctx.globalAlpha = 1.0;
 
-                // Instructions Text on Scratch Layer
+                // Label
                 ctx.fillStyle = '#666';
                 ctx.font = 'bold 20px Assistant';
                 ctx.textAlign = 'center';
                 ctx.fillText('גרד כאן!', canvas.width/2, canvas.height/2 + 7);
+
+                // --- KEY FIX: Only show image AFTER scratch layer is ready ---
+                img.style.opacity = '1';
 
                 let isDrawing = false;
 
@@ -344,7 +349,12 @@
             container.style.display = 'block';
         }
 
-        window.onload = initScratchCards;
+        // Initialize when everything is loaded
+        window.onload = () => {
+            // Small timeout to ensure layout is stable
+            setTimeout(initScratchCards, 100);
+        };
+        
         window.onresize = () => location.reload();
     </script>
 </body>
