@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>בואו לזכות בכבד אווז - כרטיס גירוד</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Assistant', sans-serif;
+            color: white;
+            touch-action: none; 
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Video Background */
+        .bg-video-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        #bg-video {
+            position: absolute;
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: -1;
+        }
+
+        .game-container {
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            gap: 1rem;
+            padding: 10px;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 7vw, 5rem);
+            font-weight: 900;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3), 0 10px 20px rgba(0,0,0,0.8);
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .instructions {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Grid Styles */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            justify-items: center;
+            max-width: 800px;
+        }
+
+        @media (min-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+        }
+
+        /* Scratch Card Container */
+        .scratch-container {
+            width: clamp(140px, 20vw, 180px);
+            height: clamp(200px, 30vw, 260px);
+            position: relative;
+            border-radius: 12px;
+            border: 3px solid #ffd700;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            background-color: #fff;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* The hidden content underneath (User Images) */
+        .card-prize-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* The scratchable canvas on top */
+        .scratch-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        /* Win Response */
+        #win-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: rgba(0,0,0,0.95);
+            border: 4px solid #ffd700;
+            border-radius: 30px;
+            padding: 2.5rem;
+            display: none;
+            z-index: 100;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .btn-reset {
+            margin-top: 25px;
+            background: linear-gradient(to right, #ffd700, #b8860b);
+            color: black;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-reset:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-video-container">
+        <video autoplay muted loop playsinline id="bg-video">
+            <source src="https://el2.phncdn.com/pics/gifs/051/520/791/51520791a.webm?validfrom=1777881269&validto=1777895669&rate=1200k&burst=1433600k&ipa=1&hash=vltCnhX9T4kvio5MoRm025fW6Es%3D" type="video/webm">
+        </video>
+    </div>
+
+    <div class="overlay"></div>
+
+    <div class="game-container">
+        <h1>בואו לזכות בכבד אווז</h1>
+        <p class="instructions">גרדו את שכבת הכסף כדי לחשוף את התמונות!</p>
+        
+        <div class="cards-grid">
+            <div class="scratch-container" data-id="1">
+                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/504714713_10221756970193160_1530533672446616150_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=f798df&_nc_ohc=rL9C5ZdHPZkQ7kNvwFbwmVP&_nc_oc=AdpjfbE3t2-TGeAWbdfwJonyVZEdma4d1XteqFJ8_mdDURnVK8C8YuDLoqycO-NRov8&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=nyGHEBCjaA2rjg4KqxSI4w&_nc_ss=7b2a8&oh=00_Af5cfE1MGGcApsKyK1VMLxE6N-I_Iy4ppLVa-KM0v0jImQ&oe=69FE5AE4" class="card-prize-img" alt="Prize 1">
+                <canvas class="scratch-canvas"></canvas>
+            </div>
+            <div class="scratch-container" data-id="2">
+                <img src="https://scontent.ftlv27-1.fna.fbcdn.net/v/t39.30808-6/508332806_10228283771590100_123235062329237238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=f798df&_nc_ohc=h56w18aFmVAQ7kNvwFiyZ53&_nc_oc=AdommK_FXuIx-qciV86qjccJA_ufu6XR8YnustpicH1ydFJAUTa5HGqBlnQz0fKVlv0&_nc_zt=23&_nc_ht=scontent.ftlv27-1.fna&_nc_gid=cFo74KLZX6vyHWtTdR_2UQ&_nc_ss=7b2a8&oh=00_Af4YjiFtLeyibP7seUJGzkj4aKD6XDM-Xybu4Hdg-8SOCA&oe=69FE3847" class="card-prize-img" alt="Prize 2">
+                <canvas class="scratch-canvas"></canvas>
+            </div>
+            <div class="scratch-container" data-id="3">
+                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/517277995_10163352825219916_3326349968517575788_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=f798df&_nc_ohc=aF-HMDZ9bIgQ7kNvwGnoyom&_nc_oc=AdqAlEQbE8HrfZZ2ZptW8qoTC0T_TW84CzA7h-JGnWApm3lKCzxMaiOU2OwykXWMKJ8&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=xrjardMx4qiHRP1sWargfg&_nc_ss=7b2a8&oh=00_Af67cYVz9O_IhP85OFn8lAyF7fPiq9blbAAYswgC9EDIPg&oe=69FE376D" class="card-prize-img" alt="Prize 3">
+                <canvas class="scratch-canvas"></canvas>
+            </div>
+            <div class="scratch-container" data-id="4">
+                <img src="https://scontent.fsdv1-2.fna.fbcdn.net/v/t39.30808-6/599425034_32670351209276403_372571765436249666_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=f798df&_nc_ohc=qSZHbGg6R-IQ7kNvwGN8iH3&_nc_oc=AdpYXVjbxzVd5ixj1WRmhZY5ZsCzmlNgdN6b2P3yL8Z_rO19irpvGINIZLci-ULr1ao&_nc_zt=23&_nc_ht=scontent.fsdv1-2.fna&_nc_gid=KdL2s0fbjI_4VU2B9BHSSQ&_nc_ss=7b2a8&oh=00_Af4-cyQkFDQXWz2YcXBp1CXVZqk7D0hb-tkaGliTfAyGhQ&oe=69FE53DE" class="card-prize-img" alt="Prize 4">
+                <canvas class="scratch-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-container">
+        <div id="win-text" style="font-size: 2.2rem; font-weight: 900; line-height: 1.2; margin-bottom: 20px;"></div>
+        <div class="btn-reset" onclick="location.reload()">נסה שוב!</div>
+    </div>
+
+    <script>
+        const winMessages = [
+            "האווז כבר ארז מזוודה והזמין מונית אליך! 🦢🚕",
+            "טעם של אוליגרך, מצפון של דוגמנית. בתיאבון! 🎩",
+            "כולסטרול זה רק מספר, הנאה זה לנצח! 🥖😋",
+            "הכבד בדרך, תכין את הטוסטים והיין הלבן! 🥂"
+        ];
+
+        let cardsFinished = new Set();
+        const totalCards = 4;
+
+        function playSound(type) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                if (type === 'scratch') {
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(100 + Math.random() * 50, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.015, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                } else {
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                }
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + (type === 'scratch' ? 0.05 : 0.5));
+            } catch (e) {}
+        }
+
+        function initScratchCards() {
+            const containers = document.querySelectorAll('.scratch-container');
+            
+            containers.forEach((container, index) => {
+                const canvas = container.querySelector('.scratch-canvas');
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                
+                // Get display dimensions
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+
+                // Create Scratch Layer (Silver Gradient like Real Scratch Cards)
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#c0c0c0');
+                grad.addColorStop(0.5, '#e8e8e8');
+                grad.addColorStop(1, '#a9a9a9');
+                
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Add texture to the scratch layer
+                ctx.globalAlpha = 0.1;
+                for(let i=0; i<100; i++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? '#fff' : '#000';
+                    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 2, 2);
+                }
+                ctx.globalAlpha = 1.0;
+
+                // Instructions Text on Scratch Layer
+                ctx.fillStyle = '#666';
+                ctx.font = 'bold 20px Assistant';
+                ctx.textAlign = 'center';
+                ctx.fillText('גרד כאן!', canvas.width/2, canvas.height/2 + 7);
+
+                let isDrawing = false;
+
+                function scratch(e) {
+                    if (!isDrawing) return;
+                    
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    const canvasRect = canvas.getBoundingClientRect();
+                    const x = clientX - canvasRect.left;
+                    const y = clientY - canvasRect.top;
+
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    playSound('scratch');
+                    checkScratchedPercent(canvas, index);
+                }
+
+                canvas.addEventListener('mousedown', () => isDrawing = true);
+                canvas.addEventListener('touchstart', () => isDrawing = true);
+                window.addEventListener('mouseup', () => isDrawing = false);
+                window.addEventListener('touchend', () => isDrawing = false);
+                canvas.addEventListener('mousemove', scratch);
+                canvas.addEventListener('touchmove', scratch);
+            });
+        }
+
+        function checkScratchedPercent(canvas, index) {
+            if (cardsFinished.has(index)) return;
+
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let transparentPixels = 0;
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                if (pixels[i + 3] < 128) {
+                    transparentPixels++;
+                }
+            }
+
+            const percent = (transparentPixels / (pixels.length / 4)) * 100;
+            
+            if (percent > 50) {
+                cardsFinished.add(index);
+                canvas.style.transition = 'opacity 0.4s ease';
+                canvas.style.opacity = '0';
+                setTimeout(() => canvas.style.display = 'none', 400);
+                
+                if (cardsFinished.size === totalCards) {
+                    setTimeout(showWin, 800);
+                }
+            }
+        }
+
+        function showWin() {
+            const container = document.getElementById('win-container');
+            const text = document.getElementById('win-text');
+            const randomMsg = winMessages[Math.floor(Math.random() * winMessages.length)];
+            
+            playSound('win');
+            text.innerText = randomMsg;
+            container.style.display = 'block';
+        }
+
+        window.onload = initScratchCards;
+        window.onresize = () => location.reload();
+    </script>
+</body>
+</html>
